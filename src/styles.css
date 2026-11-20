@@ -1,0 +1,367 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Fredoka", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Bangers", "Fredoka", ui-sans-serif, sans-serif;
+
+  --color-background: #1c2a66;
+  --color-foreground: #f7f4ff;
+  --color-card: #2a3a86;
+  --color-card-foreground: #f7f4ff;
+  --color-paper: #fff1d0;
+  --color-paper-foreground: #1a1440;
+  --color-muted: #d5defe;
+  --color-border: #101428;
+  --color-ink: #101428;
+  --color-star: #ffe14a;
+  --color-never: #3ddc84;
+  --color-never-foreground: #102418;
+  --color-done: #e11d48;
+  --color-done-foreground: #fff7f8;
+
+  --radius-sm: 0.6rem;
+  --radius-md: 0.85rem;
+  --radius-lg: 1.15rem;
+  --radius-xl: 1.35rem;
+  --radius-2xl: 1.75rem;
+}
+
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  html {
+    background: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    min-height: 100dvh;
+    background: var(--color-background);
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-star);
+    outline-offset: 3px;
+  }
+
+  ::selection {
+    background: var(--color-star);
+    color: var(--color-ink);
+  }
+}
+
+@layer components {
+  .door-title {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(3.2rem, 6vw, 5.4rem);
+    letter-spacing: 0.02em;
+    line-height: 0.86;
+    text-wrap: balance;
+    color: var(--color-star);
+    -webkit-text-stroke: 3px var(--color-ink);
+    paint-order: stroke fill;
+    text-shadow: 4px 4px 0 #101428;
+  }
+
+  .statement {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(2.4rem, 4vw, 4.4rem);
+    letter-spacing: 0.03em;
+    line-height: 0.95;
+    text-wrap: balance;
+    color: var(--color-ink);
+    text-shadow: 4px 4px 0 #ff8fb3;
+  }
+
+  .turn-call {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(1.45rem, 2.6vw, 2.35rem);
+    letter-spacing: 0.02em;
+    line-height: 0.95;
+    text-wrap: balance;
+    color: var(--color-star);
+    -webkit-text-stroke: 3px var(--color-ink);
+    paint-order: stroke fill;
+    text-shadow: 3px 3px 0 #101428;
+  }
+
+  .caption {
+    display: inline-block;
+    border: 3px solid var(--color-ink);
+    border-radius: 0.4rem;
+    background: var(--color-star);
+    color: var(--color-ink);
+    box-shadow: 3px 3px 0 var(--color-ink);
+    padding: 0.15rem 0.55rem;
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    letter-spacing: 0.04em;
+    transform: rotate(-2deg);
+  }
+
+  .statement-in {
+    animation: statement-in 250ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .panel,
+  .choice,
+  .pop {
+    border: 4px solid var(--color-ink);
+    border-radius: 1.1rem;
+    box-shadow: 6px 6px 0 var(--color-ink);
+  }
+
+  .panel {
+    background-color: #24367a;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.16) 1.1px, transparent 1.25px);
+    background-size: 8px 8px;
+  }
+
+  .bubble {
+    border-radius: 1.8rem 1.8rem 1.8rem 0.45rem;
+    background-image: radial-gradient(#ecd9a4 1.25px, transparent 1.45px);
+    background-size: 9px 9px;
+  }
+
+  .bubble::after {
+    content: "";
+    position: absolute;
+    left: 2.4rem;
+    bottom: -14px;
+    width: 26px;
+    height: 26px;
+    background: var(--color-paper);
+    border-right: 4px solid var(--color-ink);
+    border-bottom: 4px solid var(--color-ink);
+    transform: rotate(35deg);
+  }
+
+  .press {
+    transition: transform 120ms linear, box-shadow 120ms linear;
+  }
+
+  .choice:active:not(:disabled),
+  .pop:active:not(:disabled) {
+    transform: translate(6px, 6px);
+    box-shadow: none;
+  }
+
+  .choice.is-picked {
+    outline: 3px solid var(--color-star);
+    outline-offset: 3px;
+  }
+
+  .you-row {
+    background: color-mix(in oklab, var(--color-star) 16%, transparent);
+    box-shadow: inset 4px 0 0 var(--color-star);
+  }
+
+  .crew-row {
+    position: relative;
+  }
+
+  .crew-row.is-out {
+    opacity: 0.4;
+  }
+
+  .crew-row.is-zapped {
+    animation: crew-fade 1.6s ease forwards;
+  }
+
+  .crew-name.is-out {
+    color: #aeb4c2;
+  }
+
+  .crew-name.is-zapped {
+    animation: name-zap 1.6s ease forwards;
+  }
+
+  .ship-zap {
+    position: absolute;
+    z-index: 5;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .ship-body {
+    position: absolute;
+    top: 50%;
+    right: 4px;
+    width: 78px;
+    height: 46px;
+    animation: ship-fly 1.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  }
+
+  .ship-beam {
+    position: absolute;
+    top: 42%;
+    right: 74px;
+    left: 18px;
+    height: 6px;
+    border: 2px solid #101428;
+    background: #ffe14a;
+    transform-origin: right center;
+    animation: ship-beam 1.6s linear forwards;
+  }
+
+  .ship-hit {
+    position: absolute;
+    top: 18%;
+    left: 2.4rem;
+    width: 18px;
+    height: 18px;
+    background: #ffe14a;
+    border: 2px solid #101428;
+    clip-path: polygon(50% 0, 62% 35%, 100% 38%, 70% 60%, 80% 100%, 50% 76%, 20% 100%, 30% 60%, 0 38%, 38% 35%);
+    animation: ship-hit 1.6s linear forwards;
+  }
+
+  .field {
+    height: 2.75rem;
+    width: 100%;
+    border-radius: 0.9rem;
+    border: 3px solid var(--color-ink);
+    background: #152056;
+    color: var(--color-foreground);
+    padding: 0 0.875rem;
+    font: inherit;
+    font-size: 1rem;
+  }
+
+  .field::placeholder {
+    color: var(--color-muted);
+  }
+
+  .pip {
+    display: inline-block;
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 999px;
+    border: 2px solid var(--color-ink);
+    background: transparent;
+  }
+
+  .pip-live {
+    background: var(--color-done);
+  }
+}
+
+.sky {
+  position: relative;
+  min-height: 100dvh;
+  overflow: hidden;
+  background-color: #1c2a66;
+  background-image: radial-gradient(#34509a 1.35px, transparent 1.55px);
+  background-size: 11px 11px;
+}
+
+.sky::after {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  z-index: 30;
+  pointer-events: none;
+  border: 4px solid #101428;
+  border-radius: 10px;
+}
+
+.comic-sky {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.vignette {
+  height: 200px;
+  overflow: hidden;
+  border: 4px solid var(--color-ink);
+  border-radius: 1rem;
+  background: #152056;
+  box-shadow: 6px 6px 0 var(--color-ink);
+}
+
+.vignette svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+@keyframes ship-fly {
+  0% { transform: translate(120%, -50%); }
+  28% { transform: translate(0, -50%); }
+  68% { transform: translate(0, -50%); }
+  100% { transform: translate(130%, -70%); opacity: 0; }
+}
+
+@keyframes ship-beam {
+  0%, 30% { opacity: 0; transform: scaleX(0); }
+  40% { opacity: 1; transform: scaleX(1); }
+  56% { opacity: 1; transform: scaleX(1); }
+  68%, 100% { opacity: 0; transform: scaleX(1); }
+}
+
+@keyframes ship-hit {
+  0%, 36% { opacity: 0; transform: scale(0.2); }
+  46% { opacity: 1; transform: scale(1.3); }
+  62%, 100% { opacity: 0; transform: scale(0.6); }
+}
+
+@keyframes name-zap {
+  0%, 34% { color: #f7f4ff; }
+  44% { color: #ffe14a; }
+  100% { color: #aeb4c2; }
+}
+
+@keyframes crew-fade {
+  0%, 50% { opacity: 1; }
+  100% { opacity: 0.4; }
+}
+
+@keyframes statement-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (min-width: 1024px) {
+  .board-pane {
+    position: sticky;
+    top: 1.5rem;
+    display: flex;
+    max-height: calc(100dvh - 3rem);
+    min-height: 0;
+    flex-direction: column;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .statement-in,
+  .crew-row.is-zapped,
+  .crew-name.is-zapped,
+  .ship-body,
+  .ship-beam,
+  .ship-hit {
+    animation: none;
+  }
+
+  .press,
+  .choice:active:not(:disabled),
+  .pop:active:not(:disabled) {
+    transition: none;
+    transform: none;
+  }
+}
