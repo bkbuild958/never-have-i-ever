@@ -32,7 +32,7 @@ function cleanName(raw: unknown): string | null {
   if (typeof raw !== "string") return null;
   const name = raw.replace(/\s+/g, " ").trim();
   if (name.length < 1 || name.length > 20) return null;
-  if (!/^[\p{L}\p{N}][\p{L}\p{N} '’\.\-]*$/u.test(name)) return null;
+  if (!/^[\p{L}\p{N}][\p{L}\p{N} '’.\-]*$/u.test(name)) return null;
   return name;
 }
 
